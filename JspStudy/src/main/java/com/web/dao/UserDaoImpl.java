@@ -40,4 +40,40 @@ public class UserDaoImpl implements UserDao {
 		
 		return name;
 	}
+	@Override
+	public int login(String id, String password) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		int flag = 0;
+		
+		try {
+			con= pool.getConnection();
+			sql = "SELECT\r\n"
+					+ "	COUNT(um.user_id),\r\n"
+					+ "	COUNT(ud.user_password)\r\n"
+					+ "FROM \r\n"
+					+ "	user_mst AS um\r\n"
+					+ "	LEFT OUTER JOIN user_mst ud ON(ud.user_id = um.user_id AND ud.user_password = ?)\r\n"
+					+ "	#ud는 usermaster ud는 userdetail\r\n"
+					+ "WHERE\r\n"
+					+ "	um.user_id =?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1,password);
+			pstmt.setString(2, id);
+			rs = pstmt.executeQuery();
+			
+			rs.next(); 
+			//데이터접근
+			flag = rs.getInt(1) + rs.getInt(2);
+			//2여야 로그인 패스워드 둘다 맞아서 로그인가능
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return flag;
+	}
 }

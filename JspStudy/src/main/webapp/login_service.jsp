@@ -3,21 +3,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%!
-	String name= null; 
 	UserDao userDao = new UserDaoImpl();
-%>    
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+%>
+
 <%
-	name = userDao.getUserName("junil","1234");
-	name = name + "님 환영합니다.";
-	int flag = userDao.login("junil", "1234");
+	String id = request.getParameter("id");
+	String password = request.getParameter("password");
 	String msg = null;
+	int flag = userDao.login(id, password);
 	if(flag == 0){
 		msg = "존재하지 않는 아이디 입니다. 가입 후 이용 바랍니다.";
 	}else if (flag ==1){
@@ -27,9 +20,7 @@
 	}else{
 		msg = "DB오류!";
 	}
+	System.out.println(msg);
+	response.sendRedirect("login.jsp");
+	//작업이 모두 끝나면 이 jsp파일을 열어라
 %>
- <h1>hello Jsp</h1>
- <h4><%=name %></h4>
- <h2><%=msg%></h2>
-</body>
-</html>
